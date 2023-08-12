@@ -1,0 +1,86 @@
+---
+title: "tp1"
+author: "Florentin"
+date: "2023-04-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+``` 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+data <- read.csv("c:/Users/Flore/OneDrive/Bureau/MasterInfo/IIHM/tp1/results.csv", header = TRUE, sep = ",")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Ajouter une colonne de durée si les timestamps sont absolus
+data <- data %>% 
+  mutate(duree = time_to_select - time_to_select[1])
+
+# Marquer les colonnes adéquates comme des facteurs
+data$method <- as.factor(data$method)
+data$density <- as.factor(data$density)
+data$targets_Size <- as.factor(data$targets_Size)
+data$User <- as.factor(data$User)
+
+# On filtre les données pour ne pas prendre en compte les essais ratés. Un essaie est considéré comme raté si le temps de sélection est supérieur à 5 secondes.
+data <- data %>% 
+  filter(time_to_select < 5)
+
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Graphique pour observer s'il y a une différence de temps de réponse entre participants
+ggplot(data, aes(x = User, y = duree)) + 
+  geom_boxplot() + 
+  labs(x = "Participant", y = "Temps de réponse (en secondes)") + 
+  ggtitle("Différence de temps de réponse entre participants")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Graphique pour observer s'il y a une différence de temps de réponse entre techniques
+ggplot(data, aes(x = method, y = duree)) + 
+  geom_boxplot() + 
+  labs(x = "Technique", y = "Temps de réponse (en secondes)") + 
+  ggtitle("Différence de temps de réponse entre techniques")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Graphique pour observer s'il y a une différence de temps de réponse entre densités
+ggplot(data, aes(x = density, y = duree)) + 
+  geom_boxplot() + 
+  labs(x = "Densité", y = "Temps de réponse (en secondes)") + 
+  ggtitle("Différence de temps de réponse entre densités")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Graphique pour observer s'il y a une différence de temps de réponse entre tailles de cibles
+ggplot(data, aes(x = targets_Size, y = duree)) + 
+  geom_boxplot() + 
+  labs(x = "Taille des cibles", y = "Temps de réponse (en secondes)") + 
+  ggtitle("Différence de temps de réponse entre tailles de cibles")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Graphique pour observer s'il y a une différence de temps de réponse entre techniques et densités
+ggplot(data, aes(x = method, y = duree, fill = density)) + 
+  geom_boxplot() + 
+  labs(x = "Technique", y = "Temps de réponse (en secondes)", fill = "Densité") + 
+  ggtitle("Différence de temps de réponse entre techniques et densités")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Graphique pour observer s'il y a une différence de temps de réponse entre techniques et tailles de cibles
+ggplot(data, aes(x = method, y = duree, fill = targets_Size)) + 
+  geom_boxplot() + 
+  labs(x = "Technique", y = "Temps de réponse (en secondes)", fill = "Taille des cibles") + 
+  ggtitle("Différence de temps de réponse entre techniques et tailles de cibles")
+```
